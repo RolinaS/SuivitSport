@@ -1,0 +1,270 @@
+openapi: 3.0.0
+info:
+  title: API Suivi Sport & Nutrition
+  version: 1.0.0
+  description: Documentation centralisée de l'API REST pour la gestion des aliments, recettes, séances et exercices.
+servers:
+  - url: http://localhost:3000
+    description: Serveur local
+
+paths:
+  /api/aliments:
+    get:
+      tags: [Aliments]
+      summary: Récupère la liste de tous les aliments
+      responses:
+        200:
+          description: Liste des aliments retournée avec succès
+    post:
+      tags: [Aliments]
+      summary: Crée un nouvel aliment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom: { type: string }
+                proteine: { type: number }
+                lipide: { type: number }
+                glucide: { type: number }
+                matiere_grasse: { type: number }
+                kilocalorie: { type: integer }
+                famille_id: { type: integer }
+      responses:
+        201: { description: Aliment créé avec succès }
+
+  /api/aliments/{nom}:
+    get:
+      tags: [Aliments]
+      summary: Récupère un aliment par son nom exact
+      parameters:
+        - in: path
+          name: nom
+          required: true
+          schema:
+            type: string
+          description: Nom exact de l'aliment à rechercher
+      responses:
+        200:
+          description: Aliment trouvé
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: Aliment non trouvé
+
+  /api/aliments/{id}:
+    get:
+      tags: [Aliments]
+      summary: Récupère un aliment par ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Aliment trouvé }
+        404: { description: Aliment non trouvé }
+    put:
+      tags: [Aliments]
+      summary: Met à jour un aliment existant
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom: { type: string }
+                proteine: { type: number }
+                lipide: { type: number }
+                glucide: { type: number }
+                matiere_grasse: { type: number }
+                kilocalorie: { type: integer }
+                famille_id: { type: integer }
+      responses:
+        200: { description: Aliment mis à jour }
+        404: { description: Aliment non trouvé }
+    delete:
+      tags: [Aliments]
+      summary: Supprime un aliment par ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Aliment supprimé }
+        404: { description: Aliment non trouvé }
+
+  /api/recettes:
+    get:
+      tags: [Recettes]
+      summary: Récupère toutes les recettes
+      responses:
+        200: { description: Liste des recettes retournée avec succès }
+    post:
+      tags: [Recettes]
+      summary: Crée une nouvelle recette
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [utilisateur_id, nom]
+              properties:
+                utilisateur_id: { type: integer }
+                nom: { type: string }
+                type_repas_id: { type: integer }
+      responses:
+        201: { description: Recette créée avec succès }
+
+  /api/recettes/{id}:
+    get:
+      tags: [Recettes]
+      summary: Récupère une recette par ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Recette trouvée }
+        404: { description: Recette non trouvée }
+    put:
+      tags: [Recettes]
+      summary: Met à jour une recette
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                utilisateur_id: { type: integer }
+                nom: { type: string }
+                type_repas_id: { type: integer }
+      responses:
+        200: { description: Recette mise à jour }
+        404: { description: Recette non trouvée }
+    delete:
+      tags: [Recettes]
+      summary: Supprime une recette
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Recette supprimée }
+        404: { description: Recette non trouvée }
+
+  /api/exercices:
+    get:
+      tags: [Exercices]
+      summary: Récupère tous les exercices
+      responses:
+        200: { description: Liste des exercices retournée avec succès }
+    post:
+      tags: [Exercices]
+      summary: Crée un exercice sans séries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [seance_id, nom]
+              properties:
+                seance_id: { type: integer }
+                nom: { type: string }
+                groupe_musculaire: { type: string }
+      responses:
+        201: { description: Exercice créé avec succès }
+
+  /api/exercices/complet:
+    post:
+      tags: [Exercices]
+      summary: Crée un exercice avec ses séries associées
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [seance_id, nom, series]
+              properties:
+                seance_id: { type: integer }
+                nom: { type: string }
+                groupe_musculaire: { type: string }
+                series:
+                  type: array
+                  items:
+                    type: object
+                    required: [repetitions, poids, temps_repos]
+                    properties:
+                      repetitions: { type: integer }
+                      poids: { type: number }
+                      temps_repos: { type: integer }
+      responses:
+        201: { description: Exercice et séries créés avec succès }
+
+  /api/exercices/{id}:
+    get:
+      tags: [Exercices]
+      summary: Récupère un exercice par ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Exercice trouvé }
+        404: { description: Exercice non trouvé }
+    put:
+      tags: [Exercices]
+      summary: Met à jour un exercice
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [seance_id, nom]
+              properties:
+                seance_id: { type: integer }
+                nom: { type: string }
+                groupe_musculaire: { type: string }
+      responses:
+        200: { description: Exercice mis à jour }
+        404: { description: Exercice non trouvé }
+    delete:
+      tags: [Exercices]
+      summary: Supprime un exercice
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Exercice supprimé }
+        404: { description: Exercice non trouvé }

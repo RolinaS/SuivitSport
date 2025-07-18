@@ -1,0 +1,6 @@
+# Général
+.env
+
+# API
+api/.env
+api/node_modules/
